@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hrms-postgres
+    environment:
+      POSTGRES_DB: hrms_db
+      POSTGRES_USER: hrms_user
+      POSTGRES_PASSWORD: hrms_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - hrms_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hrms_user -d hrms_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: hrms-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_USERNAME: hrms_user
+      DB_PASSWORD: hrms_pass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hrms_db
+      JWT_SECRET: "please-change-this-to-a-long-random-secret-in-production-min-32-bytes"
+      MAIL_HOST: smtp.gmail.com
+      MAIL_PORT: 587
+      MAIL_USERNAME: your-email@gmail.com
+      MAIL_PASSWORD: your-app-password
+      MAIL_FROM: your-email@gmail.com
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/generated-payslips:/app/generated-payslips
+
+volumes:
+  hrms_pg_data:

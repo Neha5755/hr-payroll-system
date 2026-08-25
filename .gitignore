@@ -1,0 +1,27 @@
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Backend
+backend/target/
+
+# Environment / secrets
+.env
+*.env
+application-local.properties
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# H2 database
+*.mv.db
+*.trace.db
